@@ -1,0 +1,84 @@
+package com.hospital.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.hospital.dto.ApiResponse;
+import com.hospital.dto.HospitalDTO;
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+import com.hospital.service.HospitalService;
+
+@RestController
+@RequestMapping("/api/hospital")
+public class HospitalController {
+	
+	@Autowired
+	private HospitalService hosSer;
+	
+	@PostMapping("/signup")
+	public ApiResponse<HospitalDTO> registerHospital(@RequestBody Hospital hospital) {
+
+		
+		return hosSer.registerHospital(hospital);
+	}
+	
+	@GetMapping("/{id}")
+	public Hospital getHospital(@PathVariable Long id) {
+		
+//		return new Hospital();
+		return hosSer.getHospitalById(id);
+		
+	}
+	
+	@PutMapping("/{id}")
+	public Hospital updateHospital(@PathVariable Long id, @RequestBody Hospital hospital) {
+		return hosSer.updateHospital(id, hospital);
+	}
+	
+	@DeleteMapping("/{id}")
+	public String deleteHospital(@PathVariable Long id) {
+		hosSer.deleteHospital(id);
+		return "Success";
+	}
+	
+	
+	@PostMapping("/login")
+	public String loginPatient(@RequestParam String email, @RequestParam String pwd) {
+		Hospital hospital = hosSer.loginHospital(email, pwd);
+		
+		if(hospital != null) {
+			return "Login Success";
+		}
+		else {
+			return "Login failed!!";
+		}
+	}
+	
+	@PostMapping("/addClaim")
+	public ClaimRequest generateClaimRequest(@RequestBody ClaimRequest cr) {
+		
+		return hosSer.generateClaimReq(cr);
+	}
+	
+	@PutMapping("/updateClaim")
+	public ClaimRequest updateClaimRequest(@RequestBody ClaimRequest cr) {
+		
+		return hosSer.updateClaimReq(cr);
+	}
+	
+	@GetMapping("/getClaimsByHosId/{id}")
+	public List<ClaimRequest> getClaimsByHospitalId(@PathVariable long id) {
+		return hosSer.getClaimsByHospitalId(id);
+	}
+}

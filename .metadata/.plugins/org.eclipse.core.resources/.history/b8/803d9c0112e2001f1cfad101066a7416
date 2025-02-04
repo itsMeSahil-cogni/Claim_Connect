@@ -1,0 +1,22 @@
+spring.application.name=ApiGateWay
+
+server.port = 3434
+
+management.endpoints.web.exposure.include=*
+
+spring.cloud.gateway.routes[0].id=CLAIMREQUESTSERVICE
+spring.cloud.gateway.routes[0].uri=lb://CLAIMREQUESTSERVICE
+spring.cloud.gateway.routes[0].predicates[0]=Path=//api/claims/**
+
+
+spring.cloud.gateway.routes[1].id=EMPLOYEESERVICE
+spring.cloud.gateway.routes[1].uri=lb://EMPLOYEESERVICE
+spring.cloud.gateway.routes[1].predicates[0]=Path=/employees/**
+
+spring.cloud.gateway.routes[1].id=EMPLOYEESERVICE
+spring.cloud.gateway.routes[1].uri=lb://EMPLOYEESERVICE
+spring.cloud.gateway.routes[1].predicates[0]=Path=/employees/**
+
+spring.cloud.gateway.routes[1].id=EMPLOYEESERVICE
+spring.cloud.gateway.routes[1].uri=lb://EMPLOYEESERVICE
+spring.cloud.gateway.routes[1].predicates[0]=Path=/employees/**

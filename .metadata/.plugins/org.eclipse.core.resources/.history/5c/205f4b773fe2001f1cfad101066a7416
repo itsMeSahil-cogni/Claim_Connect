@@ -1,0 +1,109 @@
+package com.hospital.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hospital.dto.HospitalDTO;
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+import com.hospital.exception.ResourceNotFoundException;
+import com.hospital.repo.HospitalRepository;
+import com.patient.entity.Patient;
+
+@Service
+public class HospitalServiceImpl implements HospitalService {
+
+	@Autowired
+	private HospitalRepository hospitalRepo;
+	
+	@Autowired
+	private ClaimRequestClient crClient;
+	
+	
+	@Override
+	public HospitalDTO registerHospital(Hospital hospital) {
+		
+		Hospital savedHospital = hospitalRepo.save(hospital);
+        return convertToDTO(savedHospital);
+	}
+
+	@Override
+	public HospitalDTO getHospitalById(Long id) {
+
+		 Hospital hospital = hospitalRepo.findById(id)
+	                .orElseThrow(() -> new ResourceNotFoundException("Hospital not found with id: " + id));
+	        return convertToDTO(hospital);
+	}
+
+	@Override
+	public Hospital updateHospital(Hospital hospital) {
+
+		
+		Hospital ifHospitalPresent = hospitalRepo.findById(hospital.getHospitalId()).orElse(null);
+		if(ifPatientPresent == null) {
+			throw new ResourceNotFoundException("Patient not found with id: " + updatedPat.getPatientId()); 
+		}
+		else {
+			Patient updatedPatient =  patRepo.save(updatedPat);
+			
+		
+		Hospital existingHospital = hospitalRepo.findById(id).orElse(null);
+		
+		if(existingHospital != null) {
+			existingHospital.setHospitalName(hospital.getHospitalName());
+			existingHospital.setHospitalEmail(hospital.getHospitalEmail());
+			existingHospital.setHospitalPwd(hospital.getHospitalPwd());
+			return hospitalRepo.save(existingHospital);
+		}
+		else {
+			return new Hospital();
+		}
+		
+	}
+
+	@Override
+	public void deleteHospital(Long id) {
+		
+		hospitalRepo.deleteById(id);
+	}
+
+	@Override
+	public Hospital loginHospital(String email, String password) {
+		Hospital hospital = hospitalRepo.findHospitalByEmail(email);
+		if(hospital != null && hospital.getHospitalPwd().equals(password)) {
+			return hospital;
+		}
+		return null;
+	}
+
+	@Override
+	public ClaimRequest generateClaimReq(ClaimRequest cr) {
+//		cr.setPatientId(patiendId);
+//		cr.setHospitalId(1);
+		cr.setLastUpdatedBy("hospital");
+		cr.setStatus("pending");
+		cr.setStatusMessage("Sent for patient approval");
+		return crClient.save(cr);
+	}
+
+	@Override
+	public ClaimRequest updateClaimReq(ClaimRequest cr) {
+		
+		return crClient.save(cr);
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByHospitalId(long hospitalId) {
+		
+		return crClient.getClaimsByHospitalId(hospitalId);
+	}
+	
+	
+	
+	private HospitalDTO convertToDTO(Hospital hospital) {
+        return new HospitalDTO(hospital.getHospitalId(), hospital.getHospitalName(), hospital.getHospitalEmail());
+    }
+
+}

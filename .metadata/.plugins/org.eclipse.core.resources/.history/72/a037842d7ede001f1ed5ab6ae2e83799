@@ -1,0 +1,29 @@
+package com.insurancecompany.service;
+
+import java.util.List;
+
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+
+public interface InsuranceCompanyService {
+	
+	public InsuranceCompany	 registerInsuranceCompany(InsuranceCompany insuranceComapny);
+
+	public InsuranceCompany getInsuranceCompanyById(Long id);
+
+	public InsuranceCompany updateInsuranceCompany(Long id, InsuranceCompany insuranceComapny);
+
+	public void deleteInsuranceCompany(Long id);
+
+	public InsuranceCompany loginInsuranceCompany(String email, String password);
+	
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long id);
+	
+	public ClaimRequest approveClaim(long id);
+	
+	public ClaimRequest revertClaim(ClaimRequest cr);
+	
+	public ClaimRequest rejectClaim(ClaimRequest cr);
+	
+	
+}

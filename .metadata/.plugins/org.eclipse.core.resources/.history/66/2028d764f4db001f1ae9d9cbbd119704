@@ -1,0 +1,74 @@
+package com.patient.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.patient.entity.ClaimRequest;
+import com.patient.entity.Patient;
+import com.patient.service.PatientService;
+
+@RestController
+@RequestMapping("/api/patient")
+public class PatientController {
+
+	@Autowired
+	private PatientService patSer;
+	
+	@PostMapping("/signup")
+	public Patient registerPatient(@RequestBody Patient patient) {
+//		return new Patient();
+		return patSer.registerPatient(patient);
+	}
+	
+	@GetMapping("/{id}")
+	public Patient getPatient(@PathVariable Long id) {
+		
+		return patSer.getPatientById(id);
+		
+	}
+	
+	@PutMapping("/{id}")
+	public Patient updatePatient(@PathVariable Long id, @RequestBody Patient patient) {
+		return patSer.updatePatient(id, patient);
+	}
+	
+	@DeleteMapping("/{id}")
+	public String deletePatient(@PathVariable Long id) {
+		patSer.deletePatient(id);
+		return "Success";
+	}
+	
+	
+	@PostMapping("/login")
+	public String loginPatient(@RequestParam String email, @RequestParam String password) {
+		Patient patient = patSer.loginPatient(email, password);
+		
+		if(patient != null) {
+			return "Login Success";
+		}
+		else {
+			return "Login failed!!";
+		}
+	}
+	
+	@GetMapping("/getClaim")
+	public List<ClaimRequest> getClaimByPatientId() {
+		return patSer.getClaimsByPatientId();
+	}
+			
+	@PutMapping("/acceptClaim/{id}")
+	public ClaimRequest acceptClaim(@PathVariable long id) {
+		return patSer.acceptClaim(id);
+	}
+	
+}

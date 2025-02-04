@@ -1,0 +1,44 @@
+package com.patient.service;
+
+import com.patient.entity.ClaimRequest;
+import com.patient.entity.Patient;
+
+public class PatientServiceImpl implements PatientService {
+
+	@Override
+	public Patient registerPatient(Patient patient) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Patient getPatientById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Patient updatePatient(Long id, Patient updatedPat) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deletePatient(Long id) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Patient loginPatient(String email, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClaimRequest getClaimByPatientId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

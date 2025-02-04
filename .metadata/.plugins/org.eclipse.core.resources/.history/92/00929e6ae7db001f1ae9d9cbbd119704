@@ -1,0 +1,11 @@
+package com.claimrequest.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/hospital")@RestController
+@RequestMapping("/api/hospital")
+public class ClaimRequestController {
+
+}

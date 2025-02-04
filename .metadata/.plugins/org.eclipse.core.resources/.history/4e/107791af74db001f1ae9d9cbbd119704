@@ -1,0 +1,5 @@
+package com.claimrequest.repo;
+
+public class ClaimRequestRepository {
+
+}

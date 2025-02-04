@@ -1,0 +1,14 @@
+package com.claimrequest.repo;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import com.claimrequest.entity.ClaimRequest;
+
+@Repository
+public interface ClaimRequestRepository extends JpaRepository<ClaimRequest, Long> {
+
+	@Query("select c from ClaimRequest c where c.patientId = ?1 and c.lastUpdatedBy = 'hospital'")
+	ClaimRequest getClaimByPatientId(long id);
+}

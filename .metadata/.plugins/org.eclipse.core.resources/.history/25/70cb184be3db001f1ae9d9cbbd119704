@@ -1,0 +1,5 @@
+package com.claimrequest.controller;
+
+public class ClaimRequestController {
+
+}

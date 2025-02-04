@@ -1,0 +1,68 @@
+package com.insurancecompany.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+import com.insurancecompany.service.ClaimRequestClient;
+import com.insurancecompany.service.InsuranceCompanyService;
+
+public class InsuranceCompanyController {
+	
+	@Autowired
+	private InsuranceCompanyService icSer;
+	
+	@Autowired
+	private ClaimRequestClient crClient;
+	
+	@PostMapping("/signup")
+	public InsuranceCompany registerPatient(@RequestBody InsuranceCompany insuranceCompany) {
+		return icSer.registerInsuranceCompany(insuranceCompany);
+	}
+	
+	@GetMapping("/{id}")
+	public InsuranceCompany getInsuranceCompany(@PathVariable Long id) {
+		
+		return icSer.getInsuranceCompanyById(id);
+		
+	}
+	
+	@PutMapping("/{id}")
+	public InsuranceCompany updateInsuranceCompany(@PathVariable Long id, @RequestBody InsuranceCompany insuranceCompany) {
+		return icSer.updateInsuranceCompany(id, insuranceCompany);
+	}
+	
+	@DeleteMapping("/{id}")
+	public String deleteInsuranceCompany(@PathVariable Long id) {
+		icSer.deleteInsuranceCompany(id);
+		return "Success";
+	}
+	
+	
+	@PostMapping("/login")
+	public String loginInsuranceCompany(@RequestParam String email, @RequestParam String password) {
+		InsuranceCompany insuranceCompany = icSer.loginInsuranceCompany(email, password);
+		
+		if(insuranceCompany != null) {
+			return "Login Success";
+		}
+		else {
+			return "Login failed!!";
+		}
+	}
+	
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long id) {
+		
+		return crClient.getClaimsByInsuranceCompId(id);
+
+	}
+}

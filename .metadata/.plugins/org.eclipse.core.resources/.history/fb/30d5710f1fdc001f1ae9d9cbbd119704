@@ -1,0 +1,37 @@
+package com.insurancecompany.service;
+
+import com.insurancecompany.entity.InsuranceCompany;
+
+public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
+
+	@Override
+	public InsuranceCompany registerInsuranceCompany(InsuranceCompany insuranceComapny) {
+		 
+		return null;
+	}
+
+	@Override
+	public InsuranceCompany getInsuranceCompanyById(Long id) {
+		 
+		return null;
+	}
+
+	@Override
+	public InsuranceCompany updateInsuranceCompany(Long id, InsuranceCompany insuranceComapny) {
+		 
+		return null;
+	}
+
+	@Override
+	public void deleteInsuranceCompany(Long id) {
+		 
+
+	}
+
+	@Override
+	public InsuranceCompany loginInsuranceCompany(String email, String password) {
+		 
+		return null;
+	}
+
+}

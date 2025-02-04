@@ -1,0 +1,8 @@
+package com.hospital.service;
+
+import org.springframework.cloud.openfeign.FeignClient;
+
+@FeignClient(url = "http://localhost:2001")
+public interface ClaimRequestClient {
+
+}
