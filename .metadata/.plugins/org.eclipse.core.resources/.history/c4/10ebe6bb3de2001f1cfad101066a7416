@@ -1,0 +1,99 @@
+package com.patient.controller;
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.patient.dto.ApiResponse;
+import com.patient.dto.PatientDTO;
+import com.patient.entity.ClaimRequest;
+import com.patient.entity.Patient;
+import com.patient.service.PatientService;
+
+import lombok.AllArgsConstructor;
+
+@RestController
+@RequestMapping("/api/patient")
+@AllArgsConstructor
+public class PatientController {
+
+
+	private PatientService patSer;
+	
+	@PostMapping("/signup")
+	public ApiResponse<PatientDTO> registerPatient(@RequestBody Patient patient) {
+		PatientDTO registeredPatient = patSer.registerPatient(patient);
+		ApiResponse<PatientDTO> response = new ApiResponse(HttpStatus.CREATED, "Patient registered successfully", registeredPatient);
+		return response;
+	}
+	
+	@GetMapping("/{id}")
+	public ApiResponse<PatientDTO> getPatient(@PathVariable Long id) {
+	
+		
+		PatientDTO patient = patSer.getPatientById(id);
+        ApiResponse<PatientDTO> response = new ApiResponse(HttpStatus.OK, "Patient retrieved successfully", patient);
+        return response;
+		
+	}
+	
+	@PutMapping("/update")
+	public ApiResponse<PatientDTO> updatePatient(@RequestBody Patient patient) {
+		PatientDTO updatedPatient = patSer.updatePatient(patient);
+		ApiResponse<PatientDTO> response = new ApiResponse(HttpStatus.OK, "Patient updated successfully", updatedPatient);
+		return response;
+		
+	}
+	
+	@DeleteMapping("/{id}")
+	public ApiResponse<String> deletePatient(@PathVariable Long id) {
+		patSer.deletePatient(id);
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK, "Patient deleted successfully", "Success");
+        return response;
+	}
+	
+	
+	@PostMapping("/login")
+	public ApiResponse<PatientDTO> loginPatient(@RequestParam String email, @RequestParam String password) {
+		PatientDTO patient = patSer.loginPatient(email, password);
+        ApiResponse<PatientDTO> response = new ApiResponse<>(HttpStatus.OK, "Login Success", patient);
+        return response;
+	}
+	
+	@GetMapping("/getClaims/{patientId}")
+	public ApiResponse<List<ClaimRequest>> getClaimByPatientId(@PathVariable long patientId) {
+		List<ClaimRequest> claimList = patSer.getClaimsByPatientId(patientId);
+		ApiResponse<List<ClaimRequest>> response = new ApiResponse<>(HttpStatus.OK, "Successful reterival of claims list", claimList);
+        return response;
+	}
+			
+	@PutMapping("/acceptClaim/{id}")
+	public ApiResponse<ClaimRequest> acceptClaim(@PathVariable long id) {
+		ClaimRequest claim = patSer.acceptClaim(id);
+		ApiResponse<ClaimRequest> response = new ApiResponse<>(HttpStatus.OK, "Claim accepted successfully", claim);
+        return response;
+	}
+	
+	@PutMapping("/revertClaim/{id}")
+	public ApiResponse<ClaimRequest> revertClaim(@PathVariable long id, @RequestBody String status_message) {
+		ClaimRequest claim = patSer.revertClaim(id, status_message);
+		ApiResponse<ClaimRequest> response = new ApiResponse<>(HttpStatus.OK, "Claim reverted successfully", claim);
+        return response;
+	}
+	
+	@PutMapping("/rejectClaim/{id}")
+	public ApiResponse<ClaimRequest> rejertClaim(@PathVariable long id, @RequestBody String status_message) {
+		ClaimRequest claim = patSer.rejectClaim(id, status_message);
+	}
+	
+}

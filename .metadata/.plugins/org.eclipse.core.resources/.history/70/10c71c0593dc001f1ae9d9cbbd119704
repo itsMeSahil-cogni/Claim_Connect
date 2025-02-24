@@ -1,0 +1,18 @@
+package com.insurancecompany.service;
+
+import com.insurancecompany.entity.InsuranceCompany;
+
+public interface InsuranceCompanyService {
+	
+	public InsuranceCompany	 registerInsuranceCompany(InsuranceCompany insuranceComapny);
+
+	public InsuranceCompany getInsuranceCompanyById(Long id);
+
+	public InsuranceCompany updateInsuranceCompany(Long id, InsuranceCompany insuranceComapny);
+
+	public void deleteInsuranceCompany(Long id);
+
+	public InsuranceCompany loginInsuranceCompany(String email, String password);
+	
+	
+}

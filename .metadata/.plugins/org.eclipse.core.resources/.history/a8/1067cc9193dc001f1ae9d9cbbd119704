@@ -1,0 +1,6 @@
+package com.insurancecompany.service;
+
+
+public interface ClaimRequestClient {
+	
+}

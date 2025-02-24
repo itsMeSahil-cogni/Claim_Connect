@@ -1,0 +1,21 @@
+package com.hospital.service;
+
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+
+public interface HospitalService {
+
+public Hospital registerHospital(Hospital hospital);
+	
+	public Hospital getHospitalById(Long id);
+	
+	public Hospital updateHospital(Long id, Hospital hospital);
+	
+	public void deleteHospital(Long id);
+	
+	public Hospital loginHospital(String email, String password);
+	
+	public ClaimRequest generateClaimReq(ClaimRequest cr);
+
+	public ClaimRequest updateClaimReq(long claimId, ClaimRequest cr);
+}

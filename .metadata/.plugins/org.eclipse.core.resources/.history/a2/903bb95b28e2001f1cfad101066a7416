@@ -1,0 +1,119 @@
+package com.patient.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.patient.dto.PatientDTO;
+import com.patient.entity.ClaimRequest;
+import com.patient.entity.Patient;
+import com.patient.repo.PatientRepository;
+
+@Service
+public class PatientServiceImpl implements PatientService {
+
+	@Autowired
+	private PatientRepository patRepo;
+	
+	@Autowired
+	private ClaimRequestClient crClient; 
+
+	@Override
+	public PatientDTO registerPatient(Patient patient) {
+		Patient savedPatient = patRepo.save(patient);
+        return convertToDTO(savedPatient);
+	}
+
+	@Override
+	public PatientDTO getPatientById(Long id) {
+		Patient patient =  patRepo.findById(id).orElse(null);
+		return convertToDTO(patient);
+	}
+
+	@Override
+	public PatientDTO updatePatient(Long id, Patient updatedPat) {
+		
+		Patient existingPat = patRepo.findById(id).orElse(null);
+		
+		if(existingPat != null) {
+			existingPat.setPatientName(updatedPat.getPatientName());
+			existingPat.setPatientEmail(updatedPat.getPatientEmail());
+			existingPat.setPatientPassword(updatedPat.getPatientPassword());
+			existingPat.setInsuranceCompId(updatedPat.getInsuranceCompId());
+			return patRepo.save(existingPat);
+		}
+		else {
+			return new Patient();
+		}
+//		return patientRepo.findById(id).map(existingPat -> {
+//			existingPat.setPatientName(updatedPat.getPatientName());
+//			existingPat.setPatientEmail(updatedPat.getPatientEmail());
+//			existingPat.setPatientPassword(updatedPat.getPatientPassword());
+//			existingPat.setPatientInsuranceProvider(updatedPat.getPatientInsuranceProvider());
+//			return patientRepo.save(existingPat);
+//		}).orElse(new Patient());
+	}
+
+	@Override
+	public void deletePatient(Long id) {
+		patRepo.deleteById(id);
+	}
+
+	@Override
+	public PatientDTO loginPatient(String email, String password) {
+		Patient patient = patRepo.findByPatientEmail(email);
+		if(patient != null && patient.getPatientPassword().equals(password)) {
+			return patient;
+		}
+		return null;
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByPatientId(long patientId) {
+//		long loggedInUserId = 1; // hardcode
+		System.out.println("Inside patient service impl : getClaimsByPatientId");
+		return crClient.getClaimsByPatientId(patientId);
+	}
+
+	@Override
+	public ClaimRequest acceptClaim(long id) {
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("patient");
+			exisitingClaim.setStatus("accepted");
+			exisitingClaim.setStatusMessage("Forwarded to Insurance Provider");
+			return crClient.save(exisitingClaim);
+		}
+		return null;
+		
+	}
+
+	@Override
+	public ClaimRequest revertClaim(long id, String status_message) {
+		
+		ClaimRequest cr = crClient.findById(id);
+		cr.setLastUpdatedBy("patient");
+		cr.setStatus("reverted");
+		cr.setStatusMessage(status_message);
+		return crClient.save(cr);
+	}
+
+	@Override
+	public ClaimRequest rejectClaim(long id, String status_message) {
+		
+		ClaimRequest cr = crClient.findById(id);
+		cr.setLastUpdatedBy("patient");
+		cr.setStatus("rejected");
+		cr.setStatusMessage(status_message);
+		
+		return crClient.save(cr);
+	}
+	
+	
+	
+	private PatientDTO convertToDTO(Patient patient) {
+        return new PatientDTO(patient.getPatientId(), patient.getPatientName(), patient.getPatientEmail(), patient.getInsuranceCompId());
+    }
+
+}

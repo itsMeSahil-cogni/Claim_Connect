@@ -1,0 +1,5 @@
+package com.insurancecompany.dto;
+
+public class InsuranceCompanyDTO {
+
+}

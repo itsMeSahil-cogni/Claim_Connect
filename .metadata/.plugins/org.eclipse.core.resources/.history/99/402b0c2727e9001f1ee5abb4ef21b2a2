@@ -1,0 +1,28 @@
+package com.hospital.entity;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class Patient {
+
+	
+    private Long patientId; // Unique identifier for each patient
+
+   
+    private String patientName; // Full name of the patient
+
+    
+    private String patientEmail; // Email address of the patient
+
+    
+    private String patientPassword; // Password for patient login
+
+    private Long insuranceCompId; // Associated insurance company ID
+    
+
+}

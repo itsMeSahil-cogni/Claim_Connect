@@ -1,0 +1,27 @@
+package com.claimrequest.service;
+
+import java.util.List;
+
+import com.claimrequest.entity.ClaimRequest;
+
+public class ClaimRequestServiceImpl implements ClaimRequestService {
+
+	@Override
+	public List<ClaimRequest> getClaimsByHospitalId(long hospitalId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByPatientId(long patientId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long insuranceCompId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

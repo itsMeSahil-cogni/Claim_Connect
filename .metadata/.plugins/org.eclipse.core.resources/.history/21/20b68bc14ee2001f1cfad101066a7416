@@ -1,0 +1,122 @@
+package com.insurancecompany.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.insurancecompany.dto.InsuranceCompanyDTO;
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+import com.insurancecompany.exception.ResourceNotFoundException;
+import com.insurancecompany.repo.InsuranceCompanyRepository;
+import com.patient.entity.Patient;
+
+@Service
+public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
+
+	@Autowired
+	private InsuranceCompanyRepository icRepo;
+	
+	@Autowired
+	private ClaimRequestClient crClient;
+
+	@Override
+	public InsuranceCompanyDTO registerInsuranceCompany(InsuranceCompany insuranceComapny) {
+		InsuranceCompany savedCompany = icRepo.save(insuranceCompany);
+        return convertToDTO(savedCompany);
+	}
+
+	@Override
+	public InsuranceCompanyDTO getInsuranceCompanyById(Long id) {
+		
+		InsuranceCompany company = icRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("InsuranceCompany not found with id: " + id));
+        return convertToDTO(company);
+	}
+
+	@Override
+	public InsuranceCompanyDTO updateInsuranceCompany(InsuranceCompany insuranceComapny) {
+		InsuranceCompany exisitingRecord = icRepo.findById(insuranceComapny.getInsuranceCompId()).orElse(null);
+		
+		if(exisitingRecord == null) {
+			throw new ResourceNotFoundException("Insurance not found with id: " + insuranceComapny.getInsuranceCompId()); 
+			
+		}
+		InsuranceCompany savedCompany = icRepo.save(insuranceComapny);
+		return convertToDTO(savedCompany);
+	}
+
+	@Override
+	public void deleteInsuranceCompany(Long id) {
+
+		if (!icRepo.existsById(id)) {
+            throw new ResourceNotFoundException("InsuranceCompany not found with id: " + id);
+        }
+        icRepo.deleteById(id);
+		
+	}
+
+	@Override
+	public InsuranceCompanyDTO loginInsuranceCompany(String email, String password) {
+		InsuranceCompany existingRecord = icRepo.findInsuranceCompanyByEmail(email);
+        if (existingRecord != null && existingRecord.getInsuranceCompPwd().equals(password)) {
+            return convertToDTO(existingRecord);
+        }
+        throw new ResourceNotFoundException("Invalid email or password");
+	}
+	
+	@Override
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long id) {
+		
+//		System.out.println("Inside insurance service...");
+//		List<ClaimRequest> list = crClient.getClaimsByInsuranceCompId(id);
+//		System.out.println(list);
+//		return list;
+		
+		
+		InsuranceCompany exisitingInsuranceComp = icRepo.findById(id).orElse(null);
+		if(exisitingInsuranceComp != null) {
+			return crClient.getClaimsByInsuranceCompId(id);
+		}
+		throw new ResourceNotFoundException("InsuranceCompany with given insurance-company id not found!");
+	}
+
+	@Override
+	public ClaimRequest approveClaim(long id) {
+		
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("insuranceComp");
+			exisitingClaim.setStatus("approved");
+			exisitingClaim.setStatusMessage("Claim is approved by insurance companyssss");
+			return crClient.save(exisitingClaim);
+		}
+		return null;
+	}
+
+	@Override
+	public ClaimRequest revertClaim(long id, String status_message) {
+		
+		ClaimRequest cr = crClient.findById(id);
+		cr.setLastUpdatedBy("insuranceComp");
+		cr.setStatus("reverted");
+		cr.setStatusMessage(status_message);
+		return crClient.save(cr);
+	}
+
+	@Override
+	public ClaimRequest rejectClaim(long id, String status_message) {
+		
+		ClaimRequest cr = crClient.findById(id);
+		cr.setLastUpdatedBy("insuranceComp");
+		cr.setStatus("rejected");
+		cr.setStatusMessage(status_message);
+		return crClient.save(cr);
+	}
+
+	private InsuranceCompanyDTO convertToDTO(InsuranceCompany company) {
+        return new InsuranceCompanyDTO(company.getInsuranceCompId(), company.getInsuranceCompName(), company.getInsuranceCompEmail());
+    }
+
+}

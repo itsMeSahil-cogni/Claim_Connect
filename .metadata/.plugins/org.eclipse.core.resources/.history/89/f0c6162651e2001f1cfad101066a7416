@@ -1,0 +1,99 @@
+package com.insurancecompany.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.insurancecompany.dto.ApiResponse;
+import com.insurancecompany.dto.InsuranceCompanyDTO;
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+import com.insurancecompany.service.InsuranceCompanyService;
+
+@RestController
+@RequestMapping("/api/insuranceComp")
+public class InsuranceCompanyController {
+	
+	@Autowired
+	private InsuranceCompanyService icSer;
+	
+	@PostMapping("/signup")
+	public ApiResponse<InsuranceCompanyDTO> registerPatient(@RequestBody InsuranceCompany insuranceCompany) {
+		 InsuranceCompanyDTO registeredCompany = icSer.registerInsuranceCompany(insuranceCompany);
+	        ApiResponse<InsuranceCompanyDTO> response = new ApiResponse<>(HttpStatus.CREATED, "Insurance company registered successfully", registeredCompany);
+	        return response;
+	}
+	
+	@GetMapping("/{id}")
+	public ApiResponse<InsuranceCompanyDTO> getInsuranceCompany(@PathVariable Long id) {
+		
+		InsuranceCompanyDTO company = icSer.getInsuranceCompanyById(id);
+        ApiResponse<InsuranceCompanyDTO> response = new ApiResponse<>(HttpStatus.OK , "Insurance company retrieved successfully", company);
+        return response;
+		
+	}
+	
+	@PutMapping("/update")
+	public ApiResponse<InsuranceCompanyDTO> updateInsuranceCompany(@RequestBody InsuranceCompany insuranceCompany) {
+		  InsuranceCompanyDTO updatedCompany = icSer.updateInsuranceCompany( insuranceCompany);
+	        ApiResponse<InsuranceCompanyDTO> response = new ApiResponse<>(HttpStatus.OK , "Insurance company updated successfully", updatedCompany);
+	        return response;
+	}
+	
+	@DeleteMapping("/{id}")
+	public ApiResponse<String> deleteInsuranceCompany(@PathVariable Long id) {
+		icSer.deleteInsuranceCompany(id);
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK , "Insurance company deleted successfully", "Success");
+        return response;
+	}
+	
+	
+	@PostMapping("/login")
+	public ApiResponse<InsuranceCompanyDTO> loginInsuranceCompany(@RequestParam String email, @RequestParam String password) {
+		InsuranceCompanyDTO company = icSer.loginInsuranceCompany(email, password);
+        ApiResponse<InsuranceCompanyDTO> response = new ApiResponse<>(HttpStatus.OK , "Login Success", company);
+        return response;
+	}
+	
+	@GetMapping("/getClaimByICId/{id}")
+	public ApiResponse<List<ClaimRequest>> getClaimsByInsuranceCompId(@PathVariable long id) {
+		
+		List<ClaimRequest> claims = icSer.getClaimsByInsuranceCompId(id);
+        ApiResponse<List<ClaimRequest>> response = new ApiResponse<>(HttpStatus.OK , "Claims retrieved successfully", claims);
+        return response;
+
+	}
+	
+	@PutMapping("/approveClaim/{id}")
+	public ApiResponse<ClaimRequest> approveClaim(@PathVariable long id) {
+		
+		ClaimRequest claim = icSer.approveClaim(id);
+        ApiResponse<ClaimRequest> response = new ApiResponse<>(HttpStatus.OK , "Claim approved successfully", claim);
+        return response;
+	}
+	
+	@PutMapping("/revertClaim/{id}")
+	public ApiResponse<ClaimRequest> revertClaim(@PathVariable long id, @RequestBody String status_message) {
+		
+		ClaimRequest claim = icSer.revertClaim(id, status_message);
+        ApiResponse<ClaimRequest> response = new ApiResponse<>(HttpStatus.OK , "Claim reverted successfully", claim);
+        return response;
+	}
+	
+	@PutMapping("/rejectClaim/{id}")
+	public ApiResponse<ClaimRequest> rejectClaim(@PathVariable long id, @RequestBody String status_message) {
+		
+		return icSer.rejectClaim(id, status_message);
+	}
+}

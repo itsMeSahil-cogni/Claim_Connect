@@ -1,0 +1,112 @@
+package com.patient.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.patient.dto.PatientDTO;
+import com.patient.entity.ClaimRequest;
+import com.patient.entity.Patient;
+import com.patient.exception.ResourceNotFoundException;
+import com.patient.repo.PatientRepository;
+
+@Service
+public class PatientServiceImpl implements PatientService {
+
+	@Autowired
+	private PatientRepository patRepo;
+	
+	@Autowired
+	private ClaimRequestClient crClient; 
+
+	@Override
+	public PatientDTO registerPatient(Patient patient) {
+		Patient savedPatient = patRepo.save(patient);
+        return convertToDTO(savedPatient);
+	}
+
+	@Override
+	public PatientDTO getPatientById(Long id) {
+		Patient patient = patRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+        return convertToDTO(patient);
+	}
+
+	@Override
+	public PatientDTO updatePatient(Patient updatedPat) {
+		
+		Patient ifPatientPresent = patRepo.findById(updatedPat.getPatientId()).orElse(null);
+		if(ifPatientPresent == null) {
+			throw new ResourceNotFoundException("Patient not found with id: " + updatedPat.getPatientId()); 
+		}
+		else {
+			Patient updatedPatient =  patRepo.save(updatedPat);
+			return convertToDTO(updatedPatient);
+		}
+	}
+
+	@Override
+	public void deletePatient(Long id) {
+		if (!patRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Patient not found with id: " + id);
+        }
+        patRepo.deleteById(id);
+	}
+
+	@Override
+	public PatientDTO loginPatient(String email, String password) {
+		Patient patient = patRepo.findByPatientEmail(email);
+		if(patient != null && patient.getPatientPassword().equals(password)) {
+			return convertToDTO(patient);
+		}
+		throw new ResourceNotFoundException("Invalid email or password");
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByPatientId(long patientId) {
+//		long loggedInUserId = 1; // hardcode
+		System.out.println("Inside patient service impl : getClaimsByPatientId");
+		return crClient.getClaimsByPatientId(patientId);
+	}
+
+	@Override
+	public ClaimRequest acceptClaim(long id) {
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("patient");
+			exisitingClaim.setStatus("accepted");
+			exisitingClaim.setStatusMessage("Forwarded to Insurance Provider");
+			return crClient.save(exisitingClaim);
+		}
+		return null;
+		
+	}
+
+	@Override
+	public ClaimRequest revertClaim(long id, String status_message) {
+		
+		ClaimRequest cr = crClient.findById(id);
+		cr.setLastUpdatedBy("patient");
+		cr.setStatus("reverted");
+		cr.setStatusMessage(status_message);
+		return crClient.save(cr);
+	}
+
+	@Override
+	public ClaimRequest rejectClaim(long id, String status_message) {
+		
+		ClaimRequest cr = crClient.findById(id);
+		cr.setLastUpdatedBy("patient");
+		cr.setStatus("rejected");
+		cr.setStatusMessage(status_message);
+		
+		return crClient.save(cr);
+	}
+	
+	
+	
+	private PatientDTO convertToDTO(Patient patient) {
+        return new PatientDTO(patient.getPatientId(), patient.getPatientName(), patient.getPatientEmail(), patient.getInsuranceCompId());
+    }
+
+}

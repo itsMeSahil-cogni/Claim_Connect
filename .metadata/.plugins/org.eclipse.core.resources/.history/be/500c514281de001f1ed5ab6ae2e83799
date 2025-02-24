@@ -1,0 +1,27 @@
+package com.patient.service;
+
+import java.util.List;
+
+import com.patient.entity.ClaimRequest;
+import com.patient.entity.Patient;
+
+public interface PatientService {
+
+	public Patient registerPatient(Patient patient);
+
+	public Patient getPatientById(Long id);
+
+	public Patient updatePatient(Long id, Patient updatedPat);
+
+	public void deletePatient(Long id);
+
+	public Patient loginPatient(String email, String password);
+
+	public List<ClaimRequest> getClaimsByPatientId(long patientId);
+	
+	public ClaimRequest acceptClaim(long id);
+
+	public ClaimRequest revertClaim(ClaimRequest cr);
+	
+	public ClaimRequest rejectClaim(ClaimRequest cr);
+}

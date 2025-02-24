@@ -1,0 +1,93 @@
+package com.insurancecompany.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.insurancecompany.dto.ApiResponse;
+import com.insurancecompany.dto.InsuranceCompanyDTO;
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+import com.insurancecompany.service.InsuranceCompanyService;
+
+@RestController
+@RequestMapping("/api/insuranceComp")
+public class InsuranceCompanyController {
+	
+	@Autowired
+	private InsuranceCompanyService icSer;
+	
+	@PostMapping("/signup")
+	public ApiResponse<InsuranceCompanyDTO> registerPatient(@RequestBody InsuranceCompany insuranceCompany) {
+//		System.out.println("Insurance Comp... controller");
+		InsuranceCompany c = icSer.registerInsuranceCompany(insuranceCompany);
+		System.out.println(c);
+		return c;
+	}
+	
+	@GetMapping("/{id}")
+	public InsuranceCompany getInsuranceCompany(@PathVariable Long id) {
+		
+		return icSer.getInsuranceCompanyById(id);
+		
+	}
+	
+	@PutMapping("/{id}")
+	public InsuranceCompany updateInsuranceCompany(@PathVariable Long id, @RequestBody InsuranceCompany insuranceCompany) {
+		return icSer.updateInsuranceCompany(id, insuranceCompany);
+	}
+	
+	@DeleteMapping("/{id}")
+	public String deleteInsuranceCompany(@PathVariable Long id) {
+		icSer.deleteInsuranceCompany(id);
+		return "Success";
+	}
+	
+	
+	@PostMapping("/login")
+	public String loginInsuranceCompany(@RequestParam String email, @RequestParam String password) {
+		InsuranceCompany insuranceCompany = icSer.loginInsuranceCompany(email, password);
+		
+		if(insuranceCompany != null) {
+			return "Login Success";
+		}
+		else {
+			return "Login failed!!";
+		}
+	}
+	
+	@GetMapping("/getClaimByICId/{id}")
+	public List<ClaimRequest> getClaimsByInsuranceCompId(@PathVariable long id) {
+		
+		System.out.println("inside insurance controller..");
+		return icSer.getClaimsByInsuranceCompId(id);
+
+	}
+	
+	@PutMapping("/approveClaim/{id}")
+	public ClaimRequest approveClaim(@PathVariable long id) {
+		
+		return icSer.approveClaim(id);
+	}
+	
+	@PutMapping("/revertClaim/{id}")
+	public ClaimRequest revertClaim(@PathVariable long id, @RequestBody String status_message) {
+		
+		return icSer.revertClaim(id, status_message);
+	}
+	
+	@PutMapping("/rejectClaim/{id}")
+	public ClaimRequest rejectClaim(@PathVariable long id, @RequestBody String status_message) {
+		
+		return icSer.rejectClaim(id, status_message);
+	}
+}

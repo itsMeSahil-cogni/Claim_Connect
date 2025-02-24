@@ -1,0 +1,13 @@
+package com.hospital.dto;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+public class HospitalDTO {
+	
+	private Long hospitalId;
+	private String hospitalName;
+	private String hospitalEmail;
+}

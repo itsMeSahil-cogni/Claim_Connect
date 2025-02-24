@@ -1,0 +1,102 @@
+package com.insurancecompany.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+import com.insurancecompany.repo.InsuranceCompanyRepository;
+
+@Service
+public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
+
+	@Autowired
+	private InsuranceCompanyRepository icRepo;
+	
+	@Autowired
+	private ClaimRequestClient crClient;
+
+	@Override
+	public InsuranceCompany registerInsuranceCompany(InsuranceCompany insuranceComapny) {
+		
+		return icRepo.save(insuranceComapny);
+	}
+
+	@Override
+	public InsuranceCompany getInsuranceCompanyById(Long id) {
+		
+		return icRepo.findById(id).orElse(null);
+	}
+
+	@Override
+	public InsuranceCompany updateInsuranceCompany(Long id, InsuranceCompany insuranceComapny) {
+		InsuranceCompany exisitingRecord = icRepo.findById(id).orElse(null);
+		
+		if(exisitingRecord != null) {
+			exisitingRecord.setInsuranceCompEmail(insuranceComapny.getInsuranceCompEmail());
+			exisitingRecord.setInsuranceCompPwd(insuranceComapny.getInsuranceCompPwd());
+			exisitingRecord.setInsuranceCompName(insuranceComapny.getInsuranceCompName());
+			return icRepo.save(exisitingRecord);
+		}
+		return null;
+	}
+
+	@Override
+	public void deleteInsuranceCompany(Long id) {
+
+		icRepo.deleteById(id);
+		
+	}
+
+	@Override
+	public InsuranceCompany loginInsuranceCompany(String email, String password) {
+		InsuranceCompany exisitingRecord = icRepo.findInsuranceCompanyByEmail(email);
+		
+		if(exisitingRecord != null && exisitingRecord.getInsuranceCompPwd().equals(password)) {
+			return exisitingRecord;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long id) {
+		
+		return crClient.getClaimsByInsuranceCompId(id);
+	}
+
+	@Override
+	public ClaimRequest approveClaim(long id) {
+		
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("insuranceComp");
+			exisitingClaim.setStatus("approved");
+			exisitingClaim.setStatusMessage("Claim is approved by insurance companyssss");
+			return crClient.save(exisitingClaim);
+		}
+		return null;
+	}
+
+	@Override
+	public ClaimRequest revertClaim(ClaimRequest cr) {
+		
+		cr.setLastUpdatedBy("insuranceComp");
+		cr.setStatus("reverted");
+		cr.setStatusMessage("Reverted to hospital for mis-calulation of amount");
+		return crClient.save(cr);
+	}
+
+	@Override
+	public ClaimRequest rejectClaim(ClaimRequest cr) {
+		
+		cr.setLastUpdatedBy("insuranceComp");
+		cr.setStatus("rejected");
+		cr.setStatusMessage("Claim request is invalid and contains many false claims, re-initiate the process");
+		return crClient.save(cr);
+	}
+
+	
+
+}

@@ -1,0 +1,146 @@
+package com.insurancecompany.service;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.insurancecompany.dto.InsuranceCompanyDTO;
+import com.insurancecompany.entity.ClaimRequest;
+import com.insurancecompany.entity.InsuranceCompany;
+import com.insurancecompany.exception.ClaimNotFoundException;
+import com.insurancecompany.exception.ResourceNotFoundException;
+import com.insurancecompany.repo.InsuranceCompanyRepository;
+
+import lombok.AllArgsConstructor;
+
+
+@Service
+@AllArgsConstructor
+public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
+
+	private static final Logger log = LoggerFactory.getLogger(InsuranceCompanyServiceImpl.class);
+
+	
+	private InsuranceCompanyRepository icRepo;
+	
+	private ClaimRequestClient crClient;
+
+	@Override
+	public InsuranceCompanyDTO registerInsuranceCompany(InsuranceCompany insuranceComapny) {
+		log.info("Registering insurance company :{}", insuranceComapny.getInsuranceCompName());
+
+		InsuranceCompany savedCompany = icRepo.save(insuranceComapny);
+        return convertToDTO(savedCompany);
+	}
+
+	@Override
+	public InsuranceCompanyDTO getInsuranceCompanyById(Long id) {
+		
+		log.info("Fetching insurance company with id: {}", id);
+
+		InsuranceCompany company = icRepo.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+        return convertToDTO(company);
+	}
+
+	@Override
+	public InsuranceCompanyDTO updateInsuranceCompany(InsuranceCompany insuranceComapny) {
+		
+		log.info("Updating insurance company with id: {}", insuranceComapny.getInsuranceCompId());
+
+		
+		InsuranceCompany exisitingRecord = icRepo.findById(insuranceComapny.getInsuranceCompId()).orElse(null);
+		
+		if(exisitingRecord == null) {
+			throw new ResourceNotFoundException(); 
+			
+		}
+		InsuranceCompany savedCompany = icRepo.save(insuranceComapny);
+		return convertToDTO(savedCompany);
+	}
+
+	@Override
+	public void deleteInsuranceCompany(Long id) {
+
+		log.info("Deleting insurance company with id: {}", id);
+
+		if (!icRepo.existsById(id)) {
+            throw new ResourceNotFoundException();
+        }
+        icRepo.deleteById(id);
+		
+	}
+
+	@Override
+	public InsuranceCompanyDTO loginInsuranceCompany(String email, String password) {
+		InsuranceCompany existingRecord = icRepo.findInsuranceCompanyByEmail(email);
+        if (existingRecord != null && existingRecord.getInsuranceCompPwd().equals(password)) {
+        	log.info("Login insurance company successful for email: {}", email);
+
+        	return convertToDTO(existingRecord);
+        }
+        throw new ResourceNotFoundException("Invalid email or password");
+	}
+	
+	@Override
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long id) {
+		
+		InsuranceCompany exisitingInsuranceComp = icRepo.findById(id).orElse(null);
+		if(exisitingInsuranceComp != null) {
+			return crClient.getClaimsByInsuranceCompId(id);
+		}
+		throw new ResourceNotFoundException();
+	}
+
+	@Override
+	public ClaimRequest approveClaim(long id) {
+		
+		log.info("Approving claims of id: {}", id);
+
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("insuranceComp");
+			exisitingClaim.setStatus("approved");
+			exisitingClaim.setStatusMessage("Claim is approved by insurance companyssss");
+			return crClient.save(exisitingClaim);
+		}
+		throw new ClaimNotFoundException();
+	}
+
+	@Override
+	public ClaimRequest revertClaim(long id, String status_message) {
+		
+		log.info("Revert claims of id: {}", id);
+
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("insuranceComp");
+			exisitingClaim.setStatus("reverted");
+			exisitingClaim.setStatusMessage(status_message);
+			return crClient.save(exisitingClaim);
+		}
+		throw new ClaimNotFoundException();
+	}
+
+	@Override
+	public ClaimRequest rejectClaim(long id, String status_message) {
+		
+		log.info("Rejecting claims of id: {}", id);
+
+		ClaimRequest exisitingClaim = crClient.findById(id);
+		if(exisitingClaim != null) {
+			exisitingClaim.setLastUpdatedBy("insuranceComp");
+			exisitingClaim.setStatus("rejected");
+			exisitingClaim.setStatusMessage(status_message);
+			return crClient.save(exisitingClaim);
+		}
+		throw new ClaimNotFoundException();
+	}
+
+	private InsuranceCompanyDTO convertToDTO(InsuranceCompany company) {
+        return new InsuranceCompanyDTO(company.getInsuranceCompId(), company.getInsuranceCompName(), company.getInsuranceCompEmail());
+    }
+
+}

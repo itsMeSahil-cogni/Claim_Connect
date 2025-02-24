@@ -1,0 +1,17 @@
+package com.hospital.service;
+
+import java.util.List;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import com.hospital.entity.ClaimRequest;
+
+@FeignClient(url = "http://localhost:2001/api/claims")
+public interface ClaimRequestClient {
+
+	
+	@GetMapping("/getClaimsByHospitalId/{hospitalId}")
+	List<ClaimRequest> getClaimsByHospitalId(@PathVariable long hospitalId);
+}

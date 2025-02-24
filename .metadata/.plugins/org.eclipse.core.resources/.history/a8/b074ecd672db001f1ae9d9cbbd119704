@@ -1,0 +1,44 @@
+package com.hospital.service;
+
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+
+public class HospitalServiceImpl implements HospitalService {
+
+	@Override
+	public Hospital registerHospital(Hospital hospital) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Hospital getHospitalById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Hospital updateHospital(Long id, Hospital hospital) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteHospital(Long id) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Hospital loginHospital(String email, String password) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClaimRequest generateClaimReq(Long patiendId, ClaimRequest cr) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

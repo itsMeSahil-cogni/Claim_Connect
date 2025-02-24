@@ -1,0 +1,62 @@
+package com.claimrequest.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.claimrequest.dto.ApiResponse;
+import com.claimrequest.entity.ClaimRequest;
+import com.claimrequest.service.ClaimRequestService;
+import com.patient.dto.PatientDTO;
+
+@RestController
+@RequestMapping("/api/claims")
+public class ClaimRequestController {
+	
+	@Autowired
+	private ClaimRequestService crSer;
+	
+	
+	@PostMapping("/save")
+	public ApiResponse<ClaimRequest> save(@RequestBody ClaimRequest cr) {
+		
+		ClaimRequest createdClaim = crSer.save(cr);
+		ApiResponse<ClaimRequest> response = new ApiResponse(HttpStatus.CREATED, "Claim created successfully", createdClaim);
+		return response;
+	}
+	
+	@GetMapping("/findById/{id}") 
+	public ApiResponse<ClaimRequest> findById(@PathVariable long id){
+		ClaimRequest claim = crSer.findById(id);
+		ApiResponse<ClaimRequest> response = new ApiResponse(HttpStatus.OK, "Claim retrieved successfully", claim);
+		return response;
+	}
+	
+	@GetMapping("/getClaimsByHospitalId/{hospitalId}")
+	public ApiResponse<List<ClaimRequest>> getClaimsByHospitalId(@PathVariable long hospitalId) {
+	
+		return crSer.getClaimsByHospitalId(hospitalId);
+	}
+
+	@GetMapping("/getClaimsByPatientId/{patientId}")
+	public List<ClaimRequest> getClaimsByPatientId(@PathVariable long patientId) {
+		System.out.println("Inside claimReq ms");
+		return crSer.getClaimsByPatientId(patientId);
+	}
+
+	@GetMapping("/getClaimsByInsuranceCompId/{insuranceCompId}")
+	public List<ClaimRequest> getClaimsByInsuranceCompId(@PathVariable long insuranceCompId) {
+		
+		System.out.println("inside claim controller. ...");
+		return crSer.getClaimsByInsuranceCompId(insuranceCompId);
+	}
+	
+	
+}

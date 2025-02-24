@@ -1,0 +1,6 @@
+package com.claimrequest.service;
+
+public interface ClaimRequestService {
+	
+	List<ClaimRequest> getClaimsByHospitalId(long hospitalId);
+}

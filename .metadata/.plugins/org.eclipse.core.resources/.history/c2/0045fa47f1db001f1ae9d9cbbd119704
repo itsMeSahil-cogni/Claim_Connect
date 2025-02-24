@@ -1,0 +1,39 @@
+package com.claimrequest.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.claimrequest.entity.ClaimRequest;
+import com.claimrequest.repo.ClaimRequestRepository;
+
+public class ClaimRequestServiceImpl implements ClaimRequestService {
+
+	@Autowired
+	private ClaimRequestRepository crRepo;
+	
+	@Override
+	public List<ClaimRequest> getClaimsByHospitalId(long hospitalId) {
+	
+		return crRepo.findByHospitalId(hospitalId);
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByPatientId(long patientId) {
+
+		return crRepo.findByPatientId(patientId);
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByInsuranceCompId(long insuranceCompId) {
+
+		return crRepo.findByInsuranceCompId(insuranceCompId);
+	}
+
+	@Override
+	public ClaimRequest save(ClaimRequest cr) {
+		
+		return crRepo.save(cr);
+	}
+
+}

@@ -1,0 +1,114 @@
+package com.hospital.service;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.hospital.dto.HospitalDTO;
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+import com.hospital.exception.ResourceNotFoundException;
+import com.hospital.repo.HospitalRepository;
+
+import lombok.AllArgsConstructor;
+
+@Service
+@AllArgsConstructor
+public class HospitalServiceImpl implements HospitalService {
+
+	private static final Logger log = LoggerFactory.getLogger(HospitalServiceImpl.class);
+	
+	private HospitalRepository hospitalRepo;
+	
+	
+	private ClaimRequestClient crClient;
+	
+	
+	@Override
+	public HospitalDTO registerHospital(Hospital hospital) {
+		log.info("Registering hospital :{}", hospital.getHospitalName());
+		Hospital savedHospital = hospitalRepo.save(hospital);
+        return convertToDTO(savedHospital);
+	}
+
+	@Override
+	public HospitalDTO getHospitalById(Long id) {
+		log.info("Fetching hospital with id: {}", id);
+		 Hospital hospital = hospitalRepo.findById(id)
+	                .orElseThrow(() -> new ResourceNotFoundException();
+	        return convertToDTO(hospital);
+	}
+
+	@Override
+	public HospitalDTO updateHospital(Hospital hospital) {
+
+		log.info("Updating hospital with id: {}", hospital.getHospitalId());
+		Hospital ifHospitalPresent = hospitalRepo.findById(hospital.getHospitalId()).orElse(null);
+		if(ifHospitalPresent == null) {
+			throw new ResourceNotFoundException(); 
+		}
+		else {
+			Hospital updatedHospital =  hospitalRepo.save(hospital);
+			return convertToDTO(updatedHospital);
+		}
+			
+		
+	}
+
+	@Override
+	public void deleteHospital(Long id) {
+		
+		log.info("Deleting hospital with id: {}", id);
+		if (!hospitalRepo.existsById(id)) {
+            throw new ResourceNotFoundException("Hospital not found with id: " + id);
+        }
+        hospitalRepo.deleteById(id);
+	}
+
+	@Override
+	public HospitalDTO loginHospital(String email, String password) {
+
+		Hospital hospital = hospitalRepo.findHospitalByEmail(email);
+        if (hospital != null && hospital.getHospitalPwd().equals(password)) {
+        	log.info("Login hospital successful for email: {}", email);
+            return convertToDTO(hospital);
+        }
+        throw new ResourceNotFoundException("Invalid email or password");
+	}
+
+	@Override
+	public ClaimRequest generateClaimReq(ClaimRequest cr) {
+		log.info("Generating claims for patient id: {}", cr.getPatientId());
+		cr.setLastUpdatedBy("hospital");
+		cr.setStatus("pending");
+		cr.setStatusMessage("Sent for patient approval");
+		return crClient.save(cr);
+	}
+
+	@Override
+	public ClaimRequest updateClaimReq(ClaimRequest cr) {
+		log.info("Updating claims with id: {}", cr.getId());
+		return crClient.save(cr);
+	}
+
+	@Override
+	public List<ClaimRequest> getClaimsByHospitalId(long hospitalId) {
+		
+		log.info("Fetching claims by hospital id: {}", hospitalId);
+		Hospital exisitingHospital = hospitalRepo.findById(hospitalId).orElse(null);
+		if(exisitingHospital != null) {
+			return crClient.getClaimsByHospitalId(hospitalId);
+		}
+		throw new ResourceNotFoundException("Hospital with given hospital id not found!");
+	}
+	
+	
+	
+	private HospitalDTO convertToDTO(Hospital hospital) {
+        return new HospitalDTO(hospital.getHospitalId(), hospital.getHospitalName(), hospital.getHospitalEmail());
+    }
+
+}

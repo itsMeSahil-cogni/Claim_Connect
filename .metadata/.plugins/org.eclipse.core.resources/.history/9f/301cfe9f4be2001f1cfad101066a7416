@@ -1,0 +1,7 @@
+package com.insurancecompany.dto;
+
+public class InsuranceCompanyDTO {
+	private Long insuranceCompId;
+	private String insuranceCompName;
+	private String insuranceCompEmail;
+}

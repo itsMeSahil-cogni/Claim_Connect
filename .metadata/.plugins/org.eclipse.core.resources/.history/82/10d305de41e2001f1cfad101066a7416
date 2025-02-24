@@ -1,0 +1,90 @@
+package com.hospital.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.hospital.dto.ApiResponse;
+import com.hospital.dto.HospitalDTO;
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+import com.hospital.service.HospitalService;
+
+@RestController
+@RequestMapping("/api/hospital")
+public class HospitalController {
+
+	@Autowired
+	private HospitalService hosSer;
+
+	@PostMapping("/signup")
+	public ApiResponse<HospitalDTO> registerHospital(@RequestBody Hospital hospital) {
+		HospitalDTO registeredHospital = hosSer.registerHospital(hospital);
+		ApiResponse<HospitalDTO> response = new ApiResponse<>(HttpStatus.CREATED, "Hospital registered successfully",
+				registeredHospital);
+		return response;
+	}
+
+	@GetMapping("/{id}")
+	public ApiResponse<HospitalDTO> getHospital(@PathVariable Long id) {
+
+		HospitalDTO hospital = hosSer.getHospitalById(id);
+		ApiResponse<HospitalDTO> response = new ApiResponse<>(HttpStatus.OK, "Hospital retrieved successfully",
+				hospital);
+		return response;
+
+	}
+
+	@PutMapping("/update")
+	public ApiResponse<HospitalDTO> updateHospital(@RequestBody Hospital hospital) {
+		HospitalDTO updatedHospital = hosSer.updateHospital(hospital);
+		ApiResponse<HospitalDTO> response = new ApiResponse<>(HttpStatus.OK, "Hospital updated successfully",
+				updatedHospital);
+		return response;
+	}
+
+	@DeleteMapping("/{id}")
+	public ApiResponse<String> deleteHospital(@PathVariable Long id) {
+		hosSer.deleteHospital(id);
+		ApiResponse<String> response = new ApiResponse<>(HttpStatus.OK, "Hospital deleted successfully", "Success");
+		return response;
+	}
+
+	@PostMapping("/login")
+	public ApiResponse<HospitalDTO> loginPatient(@RequestParam String email, @RequestParam String pwd) {
+		HospitalDTO hospital = hosSer.loginHospital(email, pwd);
+		ApiResponse<HospitalDTO> response = new ApiResponse<>(HttpStatus.OK, "Login Success", hospital);
+		return response;
+	}
+
+	@PostMapping("/addClaim")
+	public ApiResponse<ClaimRequest> generateClaimRequest(@RequestBody ClaimRequest cr) {
+
+		ClaimRequest claim = hosSer.generateClaimReq(cr);
+        ApiResponse<ClaimRequest> response = new ApiResponse<>(HttpStatus.CREATED , "Claim generated successfully", claim);
+        return response;
+	}
+
+	@PutMapping("/updateClaim")
+	public ApiResponse<ClaimRequest> updateClaimRequest(@RequestBody ClaimRequest cr) {
+
+		ClaimRequest claim = hosSer.updateClaimReq(cr);
+        ApiResponse<ClaimRequest> response = new ApiResponse<>(HttpStatus.OK , "Claim updated successfully", claim);
+        return response;
+	}
+
+	@GetMapping("/getClaimsByHosId/{id}")
+	public ApiResponse<List<ClaimRequest>> getClaimsByHospitalId(@PathVariable long id) {
+		return hosSer.getClaimsByHospitalId(id);
+	}
+}
