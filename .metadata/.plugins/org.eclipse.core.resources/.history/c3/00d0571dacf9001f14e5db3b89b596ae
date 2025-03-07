@@ -1,0 +1,10 @@
+package com.patient.exception;
+
+public class DeletionNotPerformedException extends RuntimeException {
+    public DeletionNotPerformedException() {
+        super("Patient not found with given id!");
+    }
+    public DeletionNotPerformedException(String msg) {
+    	super(msg);
+    }
+}

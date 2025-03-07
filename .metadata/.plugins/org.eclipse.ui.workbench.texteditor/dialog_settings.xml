@@ -7,6 +7,13 @@
 			<item value=" "/>
 		</list>
 		<list key="findhistory">
+			<item value="handleDataIntegrityViolationException"/>
+			<item value="Hospital"/>
+			<item value="apply"/>
+			<item value="getPatientByEmail"/>
+			<item value="findByPa"/>
+			<item value="&quot;Hospital"/>
+			<item value="devtools"/>
 			<item value="getByInsuranceCompId"/>
 			<item value="// TODO Auto-generated method stub"/>
 			<item value="@Override"/>

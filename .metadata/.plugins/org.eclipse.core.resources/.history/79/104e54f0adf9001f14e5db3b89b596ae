@@ -1,0 +1,16 @@
+package com.insurancecompany.dto;
+
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class InsuranceCompanyUpdateDTO {
+	@NotBlank(message = "Insurance company name is required")
+	private String insuranceCompName;
+	private String insuranceCompEmail;
+}

@@ -1,0 +1,15 @@
+package com.hospital.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+public class PatientDTO {
+
+	private Long patientId;
+	private String patientName;
+	private String patientEmail;
+	private long insuranceCompId;
+
+}

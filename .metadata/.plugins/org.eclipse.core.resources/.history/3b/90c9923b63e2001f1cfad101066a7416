@@ -1,5 +1,0 @@
-package com.patient.exception;
-
-public class ClaimNotFoundException extends RuntimeException{
-
-}

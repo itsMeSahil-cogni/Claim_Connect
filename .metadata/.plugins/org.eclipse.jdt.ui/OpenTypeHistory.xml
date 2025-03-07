@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <typeInfoHistroy>
-    <typeInfo handle="=HospitalService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.hospital.service{HospitalService.java[HospitalService" modifiers="513" timestamp="1739353765350"/>
-    <typeInfo handle="=PatientService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.patient.service{PatientService.java[PatientService" modifiers="513" timestamp="1738610618850"/>
+    <typeInfo handle="=HospitalService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.hospital.service{HospitalService.java[HospitalService" modifiers="513" timestamp="1741119601257"/>
+    <typeInfo handle="=PatientService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.patient.service{PatientService.java[PatientService" modifiers="513" timestamp="1741167904225"/>
     <typeInfo handle="=ClaimRequestService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.claimrequest.service{ClaimRequestService.java[ClaimRequestService" modifiers="513" timestamp="1737901437002"/>
-    <typeInfo handle="=InsuranceCompanyService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.insurancecompany.service{InsuranceCompanyService.java[InsuranceCompanyService" modifiers="513" timestamp="1738612272818"/>
+    <typeInfo handle="=InsuranceCompanyService/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.insurancecompany.service{InsuranceCompanyService.java[InsuranceCompanyService" modifiers="513" timestamp="1741172082788"/>
 </typeInfoHistroy>

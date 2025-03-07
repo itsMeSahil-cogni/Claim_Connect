@@ -1,0 +1,34 @@
+package com.hospital.service;
+
+import java.util.List;
+
+import com.hospital.dto.ApiResponse;
+import com.hospital.dto.HospitalDTO;
+import com.hospital.entity.ClaimRequest;
+import com.hospital.entity.Hospital;
+import com.hospital.entity.PatientDTO;
+
+public interface HospitalService {
+
+	public HospitalDTO registerHospital(Hospital hospital);
+	
+	public HospitalDTO getHospitalById(Long id);
+	
+	public HospitalDTO updateHospital(Hospital hospital);
+	
+	public void deleteHospital(Long id);
+	
+	public HospitalDTO loginHospital(String email, String password);
+	
+	public ClaimRequest generateClaimReq(ClaimRequest cr, long hospitalId);
+
+	public ClaimRequest updateClaimReq(ClaimRequest cr);
+	
+	public List<ClaimRequest> getClaimsByHospitalId(long hospitalId);
+
+	public boolean checkEligibility(long patientId);
+
+	ApiResponse<PatientDTO> getPatientByEmail(String email);
+
+	public ApiResponse<PatientDTO> getPatientById(long id);
+}

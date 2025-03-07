@@ -25,9 +25,9 @@ public class Patient {
     @NotBlank(message = "Patient name is required")
     private String patientName; // Full name of the patient
 
-    @Column(unique = true)
     @NotBlank(message = "Patient email is required")
     @Email(message = "Invalid email format")
+    @Column(unique = true)
     private String patientEmail; // Email address of the patient
 
     @NotBlank(message = "Patient password is required")

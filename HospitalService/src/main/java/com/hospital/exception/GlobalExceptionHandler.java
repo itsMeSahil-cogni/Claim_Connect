@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.hospital.dto.ApiResponse;
 import com.hospital.dto.HospitalDTO;
 
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -21,17 +22,25 @@ public class GlobalExceptionHandler {
 	// Handle all uncaught exceptions
 	@ExceptionHandler(Exception.class)
 	public ApiResponse<String> handleAllExceptions(Exception ex) {
-		
+
 		log.error("Inside handle All Exceptions -> Exception: ", ex);
 		return new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), null);
 	}
-	
-	
+
 	@ExceptionHandler(DataIntegrityViolationException.class)
 //	@ResponseStatus(HttpStatus.CONFLICT)
-	public ApiResponse<String>  handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-	    log.error("Data integrity violation: ", ex);
-	    return new ApiResponse<>(HttpStatus.CONFLICT, "Hospital with this email already exists", null);
+	public ApiResponse<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+		log.error("Data integrity violation: ", ex);
+		return new ApiResponse<>(HttpStatus.CONFLICT, "Hospital with this email already exists", null);
+	}
+
+	// Handle insurance company Not Found Exception
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ApiResponse<HospitalDTO> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+		log.error("ResourceNotFoundException: ", ex);
+
+		return new ApiResponse<>(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
+
 	}
 
 	// Handle hospital Not Found Exception

@@ -1,15 +1,23 @@
 package com.insurancecompany.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.insurancecompany.dto.ApiResponse;
+import com.insurancecompany.dto.HospitalDTO;
 import com.insurancecompany.dto.InsuranceCompanyDTO;
+import com.insurancecompany.dto.InsuranceCompanyPasswordDTO;
+import com.insurancecompany.dto.InsuranceCompanyUpdateDTO;
+import com.insurancecompany.dto.PatientDTO;
 import com.insurancecompany.entity.ClaimRequest;
 import com.insurancecompany.entity.InsuranceCompany;
 import com.insurancecompany.exception.ClaimNotFoundException;
+import com.insurancecompany.exception.InvalidCredentialsException;
 import com.insurancecompany.exception.ResourceNotFoundException;
 import com.insurancecompany.repo.InsuranceCompanyRepository;
 
@@ -30,6 +38,12 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
 
     // Client for interacting with ClaimRequest services
     private ClaimRequestClient crClient;
+    
+    private HospitalClient hospitalClient;
+    
+    private PatientClient patientClient;
+    
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Registers a new insurance company in the system.
@@ -40,6 +54,7 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
     @Override
     public InsuranceCompanyDTO registerInsuranceCompany(InsuranceCompany insuranceCompany) {
         log.info("Registering insurance company: {}", insuranceCompany.getInsuranceCompName());
+        insuranceCompany.setInsuranceCompPwd(passwordEncoder.encode(insuranceCompany.getInsuranceCompPwd()));
         InsuranceCompany savedCompany = icRepo.save(insuranceCompany);
         return convertToDTO(savedCompany);
     }
@@ -66,14 +81,20 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
      * @throws ResourceNotFoundException If the insurance company does not exist.
      */
     @Override
-    public InsuranceCompanyDTO updateInsuranceCompany(InsuranceCompany insuranceCompany) {
-        log.info("Updating insurance company with id: {}", insuranceCompany.getInsuranceCompId());
-        InsuranceCompany existingRecord = icRepo.findById(insuranceCompany.getInsuranceCompId()).orElse(null);
+    public InsuranceCompanyDTO updateInsuranceCompany(long id, InsuranceCompanyUpdateDTO insuranceCompany) {
+        log.info("Updating insurance company with id: {}", id);
+        InsuranceCompany existingRecord = icRepo.findById(id).orElse(null);
         if (existingRecord == null) {
             throw new ResourceNotFoundException();
         }
-        InsuranceCompany savedCompany = icRepo.save(insuranceCompany);
-        return convertToDTO(savedCompany);
+        if(passwordEncoder.matches(insuranceCompany.getInsuranceCompPwd(), existingRecord.getInsuranceCompPwd())) {
+        	existingRecord.setInsuranceCompName(insuranceCompany.getInsuranceCompName());
+        	InsuranceCompany savedCompany = icRepo.save(existingRecord);
+        	return convertToDTO(savedCompany);
+        }
+        else {
+        	throw new InvalidCredentialsException();
+        }
     }
 
     /**
@@ -200,5 +221,49 @@ public class InsuranceCompanyServiceImpl implements InsuranceCompanyService {
             company.getInsuranceCompEmail()
         );
     }
+
+	@Override
+	public List<InsuranceCompanyDTO> getAllIcs() {
+		log.info("Fetching insurance companies");
+        List<InsuranceCompany> companies = icRepo.findAll();
+        System.out.println(companies.size());
+//        		orElseThrow(ResourceNotFoundException::new);
+        List<InsuranceCompanyDTO> returnedCompanies = new ArrayList<>();
+        for(InsuranceCompany d : companies) {
+        	System.out.println("inside for");
+        	returnedCompanies.add(convertToDTO(d));
+        }
+		return returnedCompanies;
+	}
+
+	@Override
+	public ApiResponse<HospitalDTO> getHospitalById(long id) {
+		
+		return hospitalClient.getHospital(id);
+	}
+
+	@Override
+	public ApiResponse<PatientDTO> getPatientById(long id) {
+		
+		return patientClient.getPatientById(id);
+	}
+
+	@Override
+	public InsuranceCompanyDTO updatePassword(long id, InsuranceCompanyPasswordDTO insuranceCompany) {
+		
+		log.info("Updating insurance company with id: {}", id);
+        InsuranceCompany existingRecord = icRepo.findById(id).orElse(null);
+        if (existingRecord == null) {
+            throw new ResourceNotFoundException();
+        }
+        if(passwordEncoder.matches(insuranceCompany.getOldInsuranceCompPwd(), existingRecord.getInsuranceCompPwd())) {
+        	existingRecord.setInsuranceCompPwd(passwordEncoder.encode(insuranceCompany.getNewInsuranceCompPwd()));
+        	InsuranceCompany savedCompany = icRepo.save(existingRecord);
+        	return convertToDTO(savedCompany);
+        }
+        else {
+        	throw new InvalidCredentialsException();
+        }
+	}
 
 }

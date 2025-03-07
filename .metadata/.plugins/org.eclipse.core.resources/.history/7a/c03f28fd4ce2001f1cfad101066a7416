@@ -1,5 +1,0 @@
-package com.insurancecompany.exception;
-
-public class GlobalExceptionHandler {
-
-}

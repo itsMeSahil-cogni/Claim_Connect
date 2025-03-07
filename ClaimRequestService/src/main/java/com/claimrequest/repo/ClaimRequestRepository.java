@@ -17,6 +17,6 @@ public interface ClaimRequestRepository extends JpaRepository<ClaimRequest, Long
 	@Query("select c from ClaimRequest c where c.patientId = ?1")
 	List<ClaimRequest> findByPatientId(long patientId);
 	
-	@Query("select c from ClaimRequest c where c.insuranceCompId = ?1 and c.lastUpdatedBy='patient' and c.status='accepted'")
+	@Query("select c from ClaimRequest c where c.insuranceCompId = ?1")
 	List<ClaimRequest> getByInsuranceCompId(long insuranceCompId);
 }

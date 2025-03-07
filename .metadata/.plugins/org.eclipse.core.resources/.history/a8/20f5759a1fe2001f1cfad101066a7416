@@ -1,7 +1,0 @@
-package com.patient.dto;
-
-public class ApiResponse<T> {
-	private int status;
-	private String msg;
-	private T data;
-}

@@ -1,9 +1,0 @@
-package com.patient.dto;
-
-public class PatientDTO {
-	
-	private Long patientId;
-	private String patientName;
-	private String patientEmail;
-	private long insuranceCompId;
-}

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="HospitalServiceApplicationTests" project="HospitalService" tests="1" started="1" failures="0" errors="0" ignored="0">
-  <testsuite name="com.hospital.HospitalServiceApplicationTests" time="0.25" displayname="HospitalServiceApplicationTests" uniqueid="[engine:junit-jupiter]/[class:com.hospital.HospitalServiceApplicationTests]">
-    <testcase name="testRegisterHospital" classname="com.hospital.HospitalServiceApplicationTests" time="0.25" displayname="testRegisterHospital()" uniqueid="[engine:junit-jupiter]/[class:com.hospital.HospitalServiceApplicationTests]/[method:testRegisterHospital()]"/>
-  </testsuite>
-</testrun>

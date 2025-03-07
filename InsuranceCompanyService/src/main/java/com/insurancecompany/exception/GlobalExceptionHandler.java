@@ -24,12 +24,12 @@ public class GlobalExceptionHandler {
 		log.error("Exception: ", ex);
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
 	@ExceptionHandler(DataIntegrityViolationException.class)
 //	@ResponseStatus(HttpStatus.CONFLICT)
-	public ApiResponse<String>  handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-	    log.error("Data integrity violation: ", ex);
-	    return new ApiResponse<>(HttpStatus.CONFLICT, "Hospital with this email already exists", null);
+	public ApiResponse<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+		log.error("Data integrity violation: ", ex);
+		return new ApiResponse<>(HttpStatus.CONFLICT, "Hospital with this email already exists", null);
 	}
 
 	// Handle insurance company Not Found Exception
@@ -38,6 +38,15 @@ public class GlobalExceptionHandler {
 		log.error("ResourceNotFoundException: ", ex);
 
 		return new ApiResponse<>(HttpStatus.NOT_FOUND, ex.getMessage(), null);
+
+	}
+
+	// Handle insurance company Not Found Exception
+	@ExceptionHandler(InvalidCredentialsException.class)
+	public ApiResponse<InsuranceCompanyDTO> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+		log.error("ResourceNotFoundException: ", ex);
+
+		return new ApiResponse<>(HttpStatus.UNAUTHORIZED, ex.getMessage(), null);
 
 	}
 
